@@ -32,6 +32,12 @@ public class OverrideHolder : MonoBehaviour
         Validate();
     }
 
+    public void SetInteractable(bool b)
+    {
+        GetComponent<Collider>().enabled = b;
+        edge.color = b ? edgeNormalColor : new Color(1, 1, 1, 0.6f);
+    }
+
     public void BindToCell(OverrideCell cell)
     {
         cellBinded = cell;
@@ -57,6 +63,7 @@ public class OverrideHolder : MonoBehaviour
         edge.color = edgeNormalColor;
         LeanTween.cancel(tweenId);
         tweenId = LeanTween.move(gameObject, initialPosition, 0.3f).setEaseOutCubic().id;
+        GetComponent<Collider>().enabled = true;
     }
 
     public void Validate()

@@ -13,6 +13,8 @@ public class TurnPlayer : MonoBehaviour
     [SerializeField]
     UiManager uiManager = null;
 
+    OverridesManager overrideManager;
+
     Override[,] overridesOnTiles;
 
     List<Vector3> predictedPositions = new List<Vector3>();
@@ -24,6 +26,7 @@ public class TurnPlayer : MonoBehaviour
         Instance = this;
         overridesOnTiles = new Override[Grid.Size, Grid.Size];
         CommandUi = FindObjectOfType<CommandUiManager>();
+        overrideManager = FindObjectOfType<OverridesManager>();
     }
 
     private void Start()
@@ -46,6 +49,7 @@ public class TurnPlayer : MonoBehaviour
         }
         uiManager.ResetToDefaults();
         focusAgent.ResetToInitials();
+        overrideManager.SetInteractable(true);
         CommandUi.SetTurn(0);
     }
 
@@ -89,6 +93,11 @@ public class TurnPlayer : MonoBehaviour
         {
             predictedPositions.Clear();
             predictedPositions.Add(Grid.IndexToPosition(focusAgent.InitialIndex));
+        }
+        
+        if (!prediction)
+        {
+            overrideManager.SetInteractable(false);
         }
 
         while (true)

@@ -68,4 +68,12 @@ public class OverridesManager : MonoBehaviour
             holderInHand.transform.position = Vector3.SmoothDamp(holderInHand.transform.position, pos, ref vel, 0.05f);
         }
     }
+
+    public void SetInteractable(bool b)
+    {
+        foreach (var holder in holders)
+        {
+            holder.SetInteractable(b);
+        }
+    }
 }

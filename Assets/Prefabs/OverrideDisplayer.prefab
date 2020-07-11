@@ -288,6 +288,7 @@ MonoBehaviour:
   overr:
     type: 0
   middle: {fileID: 1229627775296102521}
+  edge: {fileID: 6671800556357542209}
   skipVisuals: {fileID: 7489247665281639600}
   invertVisuals: {fileID: 7489247665096983908}
   repeatVisuals: {fileID: 3576024935665990722}
