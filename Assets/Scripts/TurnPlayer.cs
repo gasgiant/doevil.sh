@@ -7,16 +7,13 @@ public class TurnPlayer : MonoBehaviour
     public static TurnPlayer Instance;
 
     [SerializeField]
-    Agent agent = null;
+    Agent focusAgent = null;
     [SerializeField]
     PredictionView predictionView = null;
+    public CommandUiManager CommandUi;
     [SerializeField]
-    CommandUiManager commandUi = null;
+    UiManager uiManager;
 
-    [SerializeField]
-    List<Command> commands = null;
-
-    Override[] overridesOnTurns;
     Override[,] overridesOnTiles;
 
     List<Vector3> predictedPositions = new List<Vector3>();
@@ -26,13 +23,13 @@ public class TurnPlayer : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        overridesOnTurns = new Override[commands.Count];
         overridesOnTiles = new Override[Grid.Size, Grid.Size];
+        CommandUi = FindObjectOfType<CommandUiManager>();
     }
 
     private void Start()
     {
-        commandUi.DisplayCommands(commands);
+        CommandUi.DisplayCommands(focusAgent.commands);
         Play(true);
     }
 
@@ -48,8 +45,9 @@ public class TurnPlayer : MonoBehaviour
             StopCoroutine(playRoutine);
             playRoutine = null;
         }
-        agent.ResetToInitials();
-        commandUi.SetTurn(0);
+        uiManager.ResetToDefaults();
+        focusAgent.ResetToInitials();
+        CommandUi.SetTurn(0);
     }
 
     public void AddOverride(Override overr, bool onTile, int turnNumber, Vector2Int index)
@@ -57,7 +55,7 @@ public class TurnPlayer : MonoBehaviour
         if (onTile)
             overridesOnTiles[index.x, index.y] = overr;
         else
-            overridesOnTurns[turnNumber] = overr;
+            focusAgent.overridesOnTurns[turnNumber] = overr;
         Play(true);
     }
 
@@ -66,7 +64,7 @@ public class TurnPlayer : MonoBehaviour
         if (onTile)
             overridesOnTiles[index.x, index.y] = null;
         else
-            overridesOnTurns[turnNumber] = null;
+            focusAgent.overridesOnTurns[turnNumber] = null;
         Play(true);
     }
 
@@ -78,6 +76,7 @@ public class TurnPlayer : MonoBehaviour
             playRoutine = null;
         }
         ResetEverything();
+        if (!prediction) uiManager.SwitchRun(false);
         playRoutine = StartCoroutine(PlayCoroutine(prediction));
     }
 
@@ -85,21 +84,22 @@ public class TurnPlayer : MonoBehaviour
     {
         Blocker blocker = new Blocker();
         CommandResult result = new CommandResult();
+        bool isFinished = false;
+
         if (prediction)
         {
             predictedPositions.Clear();
-            predictedPositions.Add(Grid.IndexToPosition(agent.InitialIndex));
+            predictedPositions.Add(Grid.IndexToPosition(focusAgent.InitialIndex));
         }
 
-        for (int i = 0; i < commands.Count; i++)
+        while (true)
         {
-            int index = i % commands.Count;
-
-            Command command = commands[index];
-            if (overridesOnTiles[agent.Index.x, agent.Index.y] != null)
-                command = overridesOnTiles[agent.Index.x, agent.Index.y].GetResult(command);
-            if (overridesOnTurns[index] != null)
-                command = overridesOnTurns[index].GetResult(command);
+            Command command = focusAgent.GetCommand();
+            if (overridesOnTiles[focusAgent.Index.x, focusAgent.Index.y] != null)
+                command = overridesOnTiles[focusAgent.Index.x, focusAgent.Index.y].GetResult(command);
+            Override iverrideOnTurn = focusAgent.GetOverride();
+            if (iverrideOnTurn != null)
+                command = iverrideOnTurn.GetResult(command);
 
             ExecuteCommand(blocker, result, prediction, command);
 
@@ -108,26 +108,38 @@ public class TurnPlayer : MonoBehaviour
                 yield return null;
             }
 
-            if (prediction)
-            {
-                predictedPositions.Add(Grid.IndexToPosition(agent.Index));
-            }
-            else
-            {
-                if (index < commands.Count - 1)
-                    commandUi.SetTurn(index + 1);
-                yield return new WaitForSeconds(0.5f);
-            }
+            focusAgent.IncrementTurn();
 
             if (result.type == CommandResultType.Death)
             {
-                break;
+                if (!prediction)
+                {
+                    uiManager.ShowLoseSceen();
+                }
+                isFinished = true;
             }
-
             if (result.type == CommandResultType.Goal)
             {
-                break;
+                isFinished = true;
             }
+
+            if (prediction)
+            {
+                predictedPositions.Add(Grid.IndexToPosition(focusAgent.Index));
+            }
+            else
+            {
+                if (!isFinished)
+                {
+                    CommandUi.SetTurn(focusAgent.currentTurn);
+                    yield return new WaitForSeconds(0.5f);
+                }
+            }
+
+            
+            isFinished = isFinished || focusAgent.GetCommand() == null;
+
+            if (isFinished) break;
         }
 
         if (prediction)
@@ -144,7 +156,7 @@ public class TurnPlayer : MonoBehaviour
         switch (command.type)
         {
             case CommandType.Move:
-                agent.StartCoroutine(agent.Move(blocker, result, prediction, command.dir, command.repeats));
+                focusAgent.StartCoroutine(focusAgent.Move(blocker, result, prediction, command.dir, command.repeats));
                 break;
             default:
                 break;

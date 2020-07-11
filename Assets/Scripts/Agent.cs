@@ -4,14 +4,25 @@ using UnityEngine;
 
 public class Agent : MonoBehaviour
 {
+    [HideInInspector]
     public Vector2Int Index;
-
+    [HideInInspector]
     public Vector2Int InitialIndex;
+
+    public int loops = 2;
+    public List<Command> commands = null;
+
+    [HideInInspector]
+    public Override[] overridesOnTurns;
+
+    public int currentTurn;
+    public int currentLoop;
 
     int tweenId;
 
     private void Awake()
     {
+        overridesOnTurns = new Override[commands.Count];
         InitialIndex = Grid.PositionToIndex(transform.position);
         ResetToInitials();
     }
@@ -19,8 +30,32 @@ public class Agent : MonoBehaviour
     public void ResetToInitials()
     {
         LeanTween.cancel(tweenId);
+        currentTurn = 0;
+        currentLoop = 0;
         Index = InitialIndex;
         transform.position = Vector3.right * Index.x + Vector3.up * Index.y;
+    }
+
+    public void IncrementTurn()
+    {
+        currentTurn += 1;
+        if (currentTurn >= commands.Count)
+        {
+            currentLoop++;
+            currentTurn = 0;
+        }
+    }
+
+    public Command GetCommand()
+    {
+        if (currentLoop >= loops) return null;
+        return commands[currentTurn];
+    }
+
+    public Override GetOverride()
+    {
+        if (currentLoop >= loops) return null;
+        return overridesOnTurns[currentTurn];
     }
 
     public IEnumerator Move(Blocker blocker, CommandResult result, bool prediction, Vector2Int dir, int repeats)

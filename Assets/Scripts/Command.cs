@@ -8,7 +8,7 @@ public enum CommandType
 }
 
 [System.Serializable]
-public struct Command
+public class Command
 {
     public CommandType type;
     public Vector2Int dir;
