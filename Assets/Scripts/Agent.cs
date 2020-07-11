@@ -8,6 +8,8 @@ public class Agent : MonoBehaviour
     public Vector2Int Index;
     [HideInInspector]
     public Vector2Int InitialIndex;
+    public int Direction;
+    public int InitialDirection;
 
     public int loops = 2;
     public List<Command> commands = null;
@@ -24,6 +26,8 @@ public class Agent : MonoBehaviour
     {
         overridesOnTurns = new Override[commands.Count];
         InitialIndex = Grid.PositionToIndex(transform.position);
+        InitialDirection = Direction;
+        
         ResetToInitials();
     }
 
@@ -33,7 +37,9 @@ public class Agent : MonoBehaviour
         currentTurn = 0;
         currentLoop = 0;
         Index = InitialIndex;
+        Direction = InitialDirection;
         transform.position = Vector3.right * Index.x + Vector3.up * Index.y;
+        transform.rotation = Quaternion.AngleAxis(90 * Direction, Vector3.forward);
     }
 
     public void IncrementTurn()
@@ -58,9 +64,26 @@ public class Agent : MonoBehaviour
         return overridesOnTurns[currentTurn];
     }
 
+    public void ExecuteCommand(Blocker blocker, CommandResult result, bool prediction, Command command)
+    {
+        result.type = CommandResultType.None;
+        switch (command.type)
+        {
+            case CommandType.Move:
+                StartCoroutine(Move(blocker, result, prediction, command.dir, command.repeats));
+                break;
+            case CommandType.Rotate:
+                StartCoroutine(Roatate(blocker, result, prediction, command.dir, command.repeats));
+                break;
+            default:
+                break;
+        }
+    }
+
     public IEnumerator Move(Blocker blocker, CommandResult result, bool prediction, Vector2Int dir, int repeats)
     {
         blocker.count++;
+        dir = DirectionRelative(dir, Direction);
         for (int i = 0; i < repeats; i++)
         {
             Vector2Int newIndex = Index + dir;
@@ -103,12 +126,36 @@ public class Agent : MonoBehaviour
         blocker.count--;
     }
 
+    public IEnumerator Roatate(Blocker blocker, CommandResult result, bool prediction, Vector2Int dir, int repeats)
+    {
+        blocker.count++;
+        for (int i = 0; i < repeats; i++)
+        {
+            Direction = (Direction + dir.x) % 4;
+            if (!prediction)
+            {
+                tweenId = LeanTween.rotate(gameObject, Direction * 90 * Vector3.forward, 0.3f).setEaseOutCubic().id;
+                yield return new WaitForSeconds(0.3f);
+            }
+        }
+
+        blocker.count--;
+    }
+
+
     public void TryMoveAnimation(Vector2Int dir, float time)
     {
         Vector2 pos = transform.position;
         tweenId = LeanTween.move(gameObject, pos + (Vector2)dir * 0.2f, time * 0.5f)
             .setLoopPingPong(1).setEaseOutCubic().id;
     }    
+
+    public Vector2Int DirectionRelative(Vector2Int dir, int rot)
+    {
+        Vector2 v = dir;
+        v = Quaternion.AngleAxis(90 * rot, Vector3.forward) * v;
+        return new Vector2Int(Mathf.RoundToInt(v.x), Mathf.RoundToInt(v.y));
+    }
 }
 
 public enum CommandResultType { None, Goal, Death }
@@ -117,6 +164,7 @@ public class CommandResult
 {
     public CommandResultType type;
 }
+
 
 
 

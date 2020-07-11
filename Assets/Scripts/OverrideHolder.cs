@@ -11,18 +11,23 @@ public class OverrideHolder : MonoBehaviour
     int tweenId;
 
     [SerializeField]
-    GameObject middle;
+    GameObject middle = null;
+    [SerializeField]
+    SpriteRenderer edge = null;
+
+    Color edgeNormalColor;
 
     [SerializeField]
-    GameObject skipVisuals;
+    GameObject skipVisuals = null;
     [SerializeField]
-    GameObject invertVisuals;
+    GameObject invertVisuals = null;
     [SerializeField]
-    GameObject repeatVisuals;
+    GameObject repeatVisuals = null;
     
 
     private void OnEnable()
     {
+        edgeNormalColor = edge.color;
         initialPosition = transform.position;
         Validate();
     }
@@ -49,7 +54,7 @@ public class OverrideHolder : MonoBehaviour
 
     public void ResetToInitals()
     {
-        
+        edge.color = edgeNormalColor;
         LeanTween.cancel(tweenId);
         tweenId = LeanTween.move(gameObject, initialPosition, 0.3f).setEaseOutCubic().id;
     }

@@ -7,12 +7,13 @@ public class CommandDisplayer : MonoBehaviour
 {
     [SerializeField]
     TextMeshPro number = null;
-
     [SerializeField]
     TextMeshPro repeats = null;
-
     [SerializeField]
     List<GameObject> moves = null;
+    [SerializeField]
+    List<GameObject> rotations = null;
+
 
     OverrideCell cell;
 
@@ -33,6 +34,7 @@ public class CommandDisplayer : MonoBehaviour
                 ShowMove(command);
                 break;
             case CommandType.Rotate:
+                ShowRotate(command);
                 break;
             default:
                 ShowEmpty();
@@ -58,5 +60,10 @@ public class CommandDisplayer : MonoBehaviour
         moves[3].SetActive(command.dir == Vector2Int.down);
     }
 
-
+    void ShowRotate(Command command)
+    {
+        repeats.gameObject.SetActive(true);
+        rotations[0].SetActive(command.dir.x > 0);
+        rotations[1].SetActive(command.dir.x < 0);
+    }
 }

@@ -4,10 +4,10 @@ using UnityEngine;
 public class PredictionView : MonoBehaviour
 {
     [SerializeField]
-    LineRenderer linePrefab;
+    LineRenderer linePrefab = null;
 
     [SerializeField]
-    GameObject dotPrefab;
+    GameObject dotPrefab = null;
 
     List<GameObject> allTheStuff = new List<GameObject>();
 
@@ -23,6 +23,7 @@ public class PredictionView : MonoBehaviour
 
         GameObject dot = Instantiate(dotPrefab);
         allTheStuff.Add(dot);
+        dot.transform.SetParent(transform);
         dot.transform.position = path[0];
 
         for (int i = 1; i < path.Count; i++)
@@ -31,10 +32,12 @@ public class PredictionView : MonoBehaviour
             lineRenderer.positionCount = 2;
             lineRenderer.SetPosition(0, path[i - 1]);
             lineRenderer.SetPosition(1, path[i]);
+            lineRenderer.transform.SetParent(transform);
             allTheStuff.Add(lineRenderer.gameObject);
 
             dot = Instantiate(dotPrefab);
             allTheStuff.Add(dot);
+            dot.transform.SetParent(transform);
             dot.transform.position = path[i];
         }
     }

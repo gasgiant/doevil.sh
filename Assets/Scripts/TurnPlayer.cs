@@ -6,13 +6,12 @@ public class TurnPlayer : MonoBehaviour
 {
     public static TurnPlayer Instance;
 
-    [SerializeField]
-    Agent focusAgent = null;
+    public Agent focusAgent;
     [SerializeField]
     PredictionView predictionView = null;
     public CommandUiManager CommandUi;
     [SerializeField]
-    UiManager uiManager;
+    UiManager uiManager = null;
 
     Override[,] overridesOnTiles;
 
@@ -101,7 +100,7 @@ public class TurnPlayer : MonoBehaviour
             if (iverrideOnTurn != null)
                 command = iverrideOnTurn.GetResult(command);
 
-            ExecuteCommand(blocker, result, prediction, command);
+            focusAgent.ExecuteCommand(blocker, result, prediction, command);
 
             while (blocker.IsBuisy)
             {
@@ -120,6 +119,10 @@ public class TurnPlayer : MonoBehaviour
             }
             if (result.type == CommandResultType.Goal)
             {
+                if (!prediction)
+                {
+                    uiManager.ShowWinSceen();
+                }
                 isFinished = true;
             }
 
@@ -148,19 +151,6 @@ public class TurnPlayer : MonoBehaviour
         }
 
         playRoutine = null;
-    }
-
-    public void ExecuteCommand(Blocker blocker, CommandResult result, bool prediction, Command command)
-    {
-        result.type = CommandResultType.None;
-        switch (command.type)
-        {
-            case CommandType.Move:
-                focusAgent.StartCoroutine(focusAgent.Move(blocker, result, prediction, command.dir, command.repeats));
-                break;
-            default:
-                break;
-        }
     }
 }
 
