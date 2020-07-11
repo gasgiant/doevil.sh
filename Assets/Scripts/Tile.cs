@@ -6,6 +6,8 @@ public class Tile : MonoBehaviour
     public Vector2Int Index;
     public TileType type = TileType.Free;
 
+    OverrideCell cell;
+
     [SerializeField]
     GameObject freeVisuals = null;
     [SerializeField]
@@ -14,6 +16,13 @@ public class Tile : MonoBehaviour
     GameObject deathVisuals = null;
     [SerializeField]
     GameObject goalVisuals = null;
+
+    private void Start()
+    {
+        cell = GetComponentInChildren<OverrideCell>();
+        cell.isOnTile = true;
+        cell.index = Index;
+    }
 
     public void Validate()
     {

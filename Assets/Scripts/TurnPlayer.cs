@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TurnPlayer : MonoBehaviour
 {
+    public static TurnPlayer Instance;
+
     [SerializeField]
     Agent agent = null;
     [SerializeField]
@@ -14,30 +16,64 @@ public class TurnPlayer : MonoBehaviour
     [SerializeField]
     List<Command> commands = null;
 
-    [SerializeField]
-    List<Override> overrides = null;
+    Override[] overridesOnTurns;
+    Override[,] overridesOnTiles;
 
     List<Vector3> predictedPositions = new List<Vector3>();
+
+    Coroutine playRoutine;
+
+    private void Awake()
+    {
+        Instance = this;
+        overridesOnTurns = new Override[commands.Count];
+        overridesOnTiles = new Override[Grid.Size, Grid.Size];
+    }
 
     private void Start()
     {
         commandUi.DisplayCommands(commands);
+        Play(true);
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            StartCoroutine(Play(3, true));
-        }
-
         if (Input.GetKeyDown(KeyCode.R))
         {
-            StartCoroutine(Play());
+            Play();
         }
     }
 
-    private IEnumerator Play(int loops = 3, bool prediction = false)
+    public void WriteOverride(Override overr, bool onTile, int turnNumber, Vector2Int index)
+    {
+        if (onTile)
+            overridesOnTiles[index.x, index.y] = overr;
+        else
+            overridesOnTurns[turnNumber] = overr;
+        Play(true);
+    }
+
+    public void RemoveOverride(bool onTile, int turnNumber, Vector2Int index)
+    {
+        if (onTile)
+            overridesOnTiles[index.x, index.y] = null;
+        else
+            overridesOnTurns[turnNumber] = null;
+        Play(true);
+    }
+
+    private void Play(bool prediction = false)
+    {
+        if (playRoutine != null)
+        {
+            StopCoroutine(playRoutine);
+            playRoutine = null;
+        }
+        ResetEverything();
+        StartCoroutine(PlayCoroutine(prediction));
+    }
+
+    private IEnumerator PlayCoroutine(bool prediction)
     {
         Blocker blocker = new Blocker();
         if (prediction)
@@ -46,33 +82,35 @@ public class TurnPlayer : MonoBehaviour
             predictedPositions.Add(Grid.IndexToPosition(agent.InitialIndex));
         }
 
-        for (int k = 0; k < loops; k++)
+        for (int i = 0; i < commands.Count; i++)
         {
-            for (int i = 0; i < commands.Count; i++)
+            int index = i % commands.Count;
+
+            Command command = commands[index];
+            if (overridesOnTiles[agent.Index.x, agent.Index.y] != null)
+                command = overridesOnTiles[agent.Index.x, agent.Index.y].GetResult(command);
+            if (overridesOnTurns[index] != null)
+                command = overridesOnTurns[index].GetResult(command);
+
+            ExecuteCommand(blocker, prediction, command);
+
+            while (blocker.IsBuisy)
             {
-                int index = i % commands.Count;
-
-                Command command = commands[index];
-                ExecuteCommand(blocker, prediction, command);
-
-                while (blocker.IsBuisy)
-                {
-                    yield return null;
-                }
-
-                if (prediction)
-                {
-                    predictedPositions.Add(Grid.IndexToPosition(agent.Index));
-                }
-                else
-                    yield return new WaitForSeconds(0.5f);
+                yield return null;
             }
+
+            if (prediction)
+            {
+                predictedPositions.Add(Grid.IndexToPosition(agent.Index));
+            }
+            else
+                yield return new WaitForSeconds(0.5f);
         }
 
         if (prediction)
         {
             predictionView.SetPredictionData(predictedPositions);
-            agent.ResetToInitials();
+            ResetEverything();
         }
     }
 
@@ -86,6 +124,11 @@ public class TurnPlayer : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    void ResetEverything()
+    {
+        agent.ResetToInitials();
     }
 
 }

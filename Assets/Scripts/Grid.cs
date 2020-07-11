@@ -24,10 +24,6 @@ public class Grid : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-    }
-
-    private void Start()
-    {
         InitializeTiles();
     }
 

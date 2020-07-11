@@ -6,16 +6,24 @@ using UnityEngine;
 public class CommandDisplayer : MonoBehaviour
 {
     [SerializeField]
-    TextMeshPro number;
+    TextMeshPro number = null;
 
     [SerializeField]
-    TextMeshPro repeats;
+    TextMeshPro repeats = null;
 
     [SerializeField]
-    List<GameObject> moves;
+    List<GameObject> moves = null;
+
+    OverrideCell cell;
+
+    private void OnEnable()
+    {
+        cell = GetComponentInChildren<OverrideCell>();
+    }
 
     public void Show(int num, Command command)
     {
+        cell.turnNumber = num;
         number.text = num.ToString();
         repeats.text = command.repeats.ToString();
 
