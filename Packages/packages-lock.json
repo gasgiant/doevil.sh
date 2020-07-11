@@ -1,5 +1,19 @@
 {
   "dependencies": {
+    "com.gasgiant.camera-shake": {
+      "version": "https://github.com/gasgiant/Camera-Shake.git#upm",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "ab8159a3f352235d2eb7f1c604d2a199700a643a"
+    },
+    "com.oss.leantween": {
+      "version": "https://github.com/JohannesDeml/LeanTween.git#2.50.3",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "6424a125b4d12fb37a05b2dc455eb5ac880fe0c8"
+    },
     "com.unity.2d.animation": {
       "version": "3.2.2",
       "depth": 0,
