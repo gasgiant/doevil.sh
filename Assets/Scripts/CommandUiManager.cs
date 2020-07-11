@@ -7,6 +7,9 @@ public class CommandUiManager : MonoBehaviour
     CommandDisplayer commandDisplayerPrefab = null;
     [SerializeField]
     float commandsSpacing = 1;
+    [SerializeField]
+    Transform turnCoursor;
+    float turnCoursorSpacing = 1;
 
     List<Transform> displayers = new List<Transform>();
 
@@ -22,5 +25,12 @@ public class CommandUiManager : MonoBehaviour
             diplayer.Show(i, commands[i]);
             displayers.Add(diplayer.transform);
         }
+        turnCoursor.position = displayers[0].position + Vector3.up * turnCoursorSpacing;
+    }
+
+    public void SetTurn(int i)
+    {
+        LeanTween.move(turnCoursor.gameObject, displayers[i].position + Vector3.up * turnCoursorSpacing, 0.3f)
+            .setEaseInOutCubic();
     }
 }

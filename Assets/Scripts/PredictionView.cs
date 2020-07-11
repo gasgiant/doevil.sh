@@ -4,11 +4,38 @@ using UnityEngine;
 public class PredictionView : MonoBehaviour
 {
     [SerializeField]
-    LineRenderer lineRenderer = null;
+    LineRenderer linePrefab;
+
+    [SerializeField]
+    GameObject dotPrefab;
+
+    List<GameObject> allTheStuff = new List<GameObject>();
 
     public void SetPredictionData(List<Vector3> path)
     {
-        lineRenderer.positionCount = path.Count;
-        lineRenderer.SetPositions(path.ToArray());
+        foreach (var item in allTheStuff)
+        {
+            Destroy(item);
+        }
+        allTheStuff.Clear();
+
+        if (path.Count < 1) return;
+
+        GameObject dot = Instantiate(dotPrefab);
+        allTheStuff.Add(dot);
+        dot.transform.position = path[0];
+
+        for (int i = 1; i < path.Count; i++)
+        {
+            LineRenderer lineRenderer = Instantiate(linePrefab);
+            lineRenderer.positionCount = 2;
+            lineRenderer.SetPosition(0, path[i - 1]);
+            lineRenderer.SetPosition(1, path[i]);
+            allTheStuff.Add(lineRenderer.gameObject);
+
+            dot = Instantiate(dotPrefab);
+            allTheStuff.Add(dot);
+            dot.transform.position = path[i];
+        }
     }
 }

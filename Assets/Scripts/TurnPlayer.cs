@@ -36,15 +36,23 @@ public class TurnPlayer : MonoBehaviour
         Play(true);
     }
 
-    private void Update()
+    public void Run()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Play();
-        }
+        Play();
     }
 
-    public void WriteOverride(Override overr, bool onTile, int turnNumber, Vector2Int index)
+    public void ResetEverything()
+    {
+        if (playRoutine != null)
+        {
+            StopCoroutine(playRoutine);
+            playRoutine = null;
+        }
+        agent.ResetToInitials();
+        commandUi.SetTurn(0);
+    }
+
+    public void AddOverride(Override overr, bool onTile, int turnNumber, Vector2Int index)
     {
         if (onTile)
             overridesOnTiles[index.x, index.y] = overr;
@@ -70,12 +78,13 @@ public class TurnPlayer : MonoBehaviour
             playRoutine = null;
         }
         ResetEverything();
-        StartCoroutine(PlayCoroutine(prediction));
+        playRoutine = StartCoroutine(PlayCoroutine(prediction));
     }
 
     private IEnumerator PlayCoroutine(bool prediction)
     {
         Blocker blocker = new Blocker();
+        CommandResult result = new CommandResult();
         if (prediction)
         {
             predictedPositions.Clear();
@@ -92,7 +101,7 @@ public class TurnPlayer : MonoBehaviour
             if (overridesOnTurns[index] != null)
                 command = overridesOnTurns[index].GetResult(command);
 
-            ExecuteCommand(blocker, prediction, command);
+            ExecuteCommand(blocker, result, prediction, command);
 
             while (blocker.IsBuisy)
             {
@@ -104,33 +113,43 @@ public class TurnPlayer : MonoBehaviour
                 predictedPositions.Add(Grid.IndexToPosition(agent.Index));
             }
             else
+            {
+                if (index < commands.Count - 1)
+                    commandUi.SetTurn(index + 1);
                 yield return new WaitForSeconds(0.5f);
+            }
+
+            if (result.type == CommandResultType.Death)
+            {
+                break;
+            }
+
+            if (result.type == CommandResultType.Goal)
+            {
+                break;
+            }
         }
 
         if (prediction)
         {
             predictionView.SetPredictionData(predictedPositions);
-            ResetEverything();
         }
+
+        playRoutine = null;
     }
 
-    public void ExecuteCommand(Blocker blocker, bool prediction, Command command)
+    public void ExecuteCommand(Blocker blocker, CommandResult result, bool prediction, Command command)
     {
+        result.type = CommandResultType.None;
         switch (command.type)
         {
             case CommandType.Move:
-                agent.StartCoroutine(agent.Move(blocker, prediction, command.dir, command.repeats));
+                agent.StartCoroutine(agent.Move(blocker, result, prediction, command.dir, command.repeats));
                 break;
             default:
                 break;
         }
     }
-
-    void ResetEverything()
-    {
-        agent.ResetToInitials();
-    }
-
 }
 
 public class Blocker

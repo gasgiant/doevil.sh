@@ -11,6 +11,9 @@ public class OverrideHolder : MonoBehaviour
     int tweenId;
 
     [SerializeField]
+    GameObject middle;
+
+    [SerializeField]
     GameObject skipVisuals;
     [SerializeField]
     GameObject invertVisuals;
@@ -30,6 +33,8 @@ public class OverrideHolder : MonoBehaviour
         cell.AddOverride(overr);
         LeanTween.cancel(tweenId);
         tweenId = LeanTween.move(gameObject, cell.transform.position, 0.3f).setEaseOutCubic().id;
+        if (cell.isOnTile)
+            middle.SetActive(false);
     }
 
     public void UnbindFromCell()
@@ -39,6 +44,7 @@ public class OverrideHolder : MonoBehaviour
             cellBinded.RemoveOverride();
             cellBinded = null;
         }
+        middle.SetActive(true);
     }
 
     public void ResetToInitals()

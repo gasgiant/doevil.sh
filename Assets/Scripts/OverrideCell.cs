@@ -10,11 +10,13 @@ public class OverrideCell : MonoBehaviour
 
     public void AddOverride(Override overr)
     {
-        TurnPlayer.Instance.WriteOverride(overr, isOnTile, turnNumber, index);
+        TurnPlayer.Instance.AddOverride(overr, isOnTile, turnNumber, index);
+        GetComponent<Collider>().enabled = false;
     }
 
     public void RemoveOverride()
     {
         TurnPlayer.Instance.RemoveOverride(isOnTile, turnNumber, index);
+        GetComponent<Collider>().enabled = true;
     }
 }
