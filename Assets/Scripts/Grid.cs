@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -9,14 +7,24 @@ using UnityEditor;
 public class Grid : MonoBehaviour
 {
     const int GRID_SIZE = 10;
-    public static int GridSize => GRID_SIZE;
-    public Tile[,] Tiles;
+    public static Grid Instance;
+    public static int Size => GRID_SIZE;
 
-    public GameObject tilePrefab;
-    public float tileSize = 1;
+
+    public Tile TileAt(Vector2Int index) => Tiles[index.x, index.y];
+
+    [SerializeField]
+    GameObject tilePrefab = null;
 
     [SerializeField]
     Tile[] tilesArray;
+
+    Tile[,] Tiles;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -37,6 +45,15 @@ public class Grid : MonoBehaviour
     }
 
     private int LinearIndex(int i, int j) => i * GRID_SIZE + j;
+
+    public static bool IsOutOfBoundaries(Vector2Int index)
+    {
+        return index.x >= GRID_SIZE || index.x < 0 || index.y >= GRID_SIZE || index.y < 0;
+    }
+
+    public static Vector2Int PositionToIndex(Vector2 position) => new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y));
+
+    public static Vector2 IndexToPosition(Vector2Int index) => index;
 
 
 #if UNITY_EDITOR
