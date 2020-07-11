@@ -2529,7 +2529,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -19.22, y: 0, z: 0}
 --- !u!1001 &523548812
 PrefabInstance:
@@ -2991,6 +2991,52 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 629714370}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &629813713
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 629813715}
+  - component: {fileID: 629813714}
+  m_Layer: 0
+  m_Name: CommandsUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &629813714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 629813713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b301875df07984d468b2858a5094eb6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  commandDisplayerPrefab: {fileID: 1121952040, guid: 594815cd9d4865b48847c14532137812,
+    type: 3}
+  commandsSpacing: 1
+--- !u!4 &629813715
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 629813713}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 16.24, y: 8.07, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &631155457
 GameObject:
   m_ObjectHideFlags: 0
@@ -3235,7 +3281,7 @@ Transform:
   - {fileID: 530348201}
   - {fileID: 1787421397}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &634269962
 PrefabInstance:
@@ -5530,19 +5576,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 1756864544}
   predictionView: {fileID: 461992625}
+  commandUi: {fileID: 629813714}
   commands:
   - type: 1
     dir: {x: 1, y: 0}
-    steps: 1
+    repeats: 1
   - type: 1
     dir: {x: 0, y: 1}
-    steps: 1
+    repeats: 2
   - type: 1
     dir: {x: 1, y: 0}
-    steps: 1
+    repeats: 1
+  - type: 1
+    dir: {x: 1, y: 0}
+    repeats: 1
+  - type: 1
+    dir: {x: 1, y: 0}
+    repeats: 1
+  - type: 1
+    dir: {x: 1, y: 0}
+    repeats: 1
+  - type: 1
+    dir: {x: 1, y: 0}
+    repeats: 1
   overrides:
   - type: 0
-  - type: 2
+  - type: 0
   - type: 0
 --- !u!4 &1093028069
 Transform:
@@ -6258,7 +6317,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1001 &1217532068
 PrefabInstance:
@@ -9605,7 +9664,7 @@ PrefabInstance:
     - target: {fileID: 7069046100940249426, guid: 5df408a6c1374894287738683fe0bcae,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7069046100940249426, guid: 5df408a6c1374894287738683fe0bcae,
         type: 3}

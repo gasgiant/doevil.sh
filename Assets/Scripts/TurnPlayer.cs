@@ -8,6 +8,8 @@ public class TurnPlayer : MonoBehaviour
     Agent agent = null;
     [SerializeField]
     PredictionView predictionView = null;
+    [SerializeField]
+    CommandUiManager commandUi = null;
 
     [SerializeField]
     List<Command> commands = null;
@@ -16,6 +18,11 @@ public class TurnPlayer : MonoBehaviour
     List<Override> overrides = null;
 
     List<Vector3> predictedPositions = new List<Vector3>();
+
+    private void Start()
+    {
+        commandUi.DisplayCommands(commands);
+    }
 
     private void Update()
     {
@@ -45,7 +52,7 @@ public class TurnPlayer : MonoBehaviour
             {
                 int index = i % commands.Count;
 
-                Command command = overrides[index].GetResult(commands[index]);
+                Command command = commands[index];
                 ExecuteCommand(blocker, prediction, command);
 
                 while (blocker.IsBuisy)
@@ -74,7 +81,7 @@ public class TurnPlayer : MonoBehaviour
         switch (command.type)
         {
             case CommandType.Move:
-                agent.StartCoroutine(agent.Move(blocker, prediction, command.dir, command.steps));
+                agent.StartCoroutine(agent.Move(blocker, prediction, command.dir, command.repeats));
                 break;
             default:
                 break;

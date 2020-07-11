@@ -20,10 +20,10 @@ public class Agent : MonoBehaviour
         transform.position = Vector3.right * Index.x + Vector3.up * Index.y;
     }
 
-    public IEnumerator Move(Blocker blocker, bool prediction, Vector2Int dir, int steps)
+    public IEnumerator Move(Blocker blocker, bool prediction, Vector2Int dir, int repeats)
     {
         blocker.count++;
-        for (int i = 0; i < steps; i++)
+        for (int i = 0; i < repeats; i++)
         {
             Vector2Int newIndex = Index + dir;
             if (Grid.IsOutOfBoundaries(newIndex)) break;

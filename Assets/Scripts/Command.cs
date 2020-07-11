@@ -12,20 +12,20 @@ public struct Command
 {
     public CommandType type;
     public Vector2Int dir;
-    public int steps;
+    public int repeats;
 
     public Command(CommandType type)
     {
         this.type = type;
         this.dir = Vector2Int.zero;
-        this.steps = 0;
+        this.repeats = 0;
     }
 
-    public Command(CommandType type, Vector2Int dir, int steps)
+    public Command(CommandType type, Vector2Int dir, int repeats)
     {
         this.type = type;
         this.dir = dir;
-        this.steps = steps;
+        this.repeats = repeats;
     }
 }
 
@@ -68,12 +68,12 @@ public class Override
 
     Command InvertResult(Command command)
     {
-        return new Command(command.type, -command.dir, command.steps);
+        return new Command(command.type, -command.dir, command.repeats);
     }
 
     Command RepeatResult(Command command)
     {
-        return new Command(command.type, command.dir, command.steps * 2);
+        return new Command(command.type, command.dir, command.repeats * 2);
     }
 
 }
