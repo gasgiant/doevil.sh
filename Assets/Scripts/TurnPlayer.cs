@@ -36,6 +36,7 @@ public class TurnPlayer : MonoBehaviour
     private void Start()
     {
         Play(true);
+        SetFocusOn(focusAgent);
     }
 
     private void Update()
@@ -49,11 +50,20 @@ public class TurnPlayer : MonoBehaviour
                 Agent a = hit.transform.gameObject.GetComponent<Agent>();
                 if (a != null)
                 {
-                    focusAgent = a;
+                    SetFocusOn(a);
                     Play(true);
                 }
             }
 
+        }
+    }
+
+    void SetFocusOn(Agent agent)
+    {
+        focusAgent = agent;
+        foreach (var item in agents)
+        {
+            item.MakeFocuse(agent == item);
         }
     }
 
@@ -77,6 +87,10 @@ public class TurnPlayer : MonoBehaviour
         uiManager.ResetToDefaults();
         
         overrideManager.SetInteractable(true);
+        foreach (var agent in agents)
+        {
+            agent.SetInteractable(true);
+        }
     }
 
     public void AddOverride(Override overr, bool onTile, int turnNumber, Vector2Int index)
@@ -123,6 +137,10 @@ public class TurnPlayer : MonoBehaviour
         if (!prediction)
         {
             overrideManager.SetInteractable(false);
+            foreach (var agent in agents)
+            {
+                agent.SetInteractable(false);
+            }
         }
 
         while (true)

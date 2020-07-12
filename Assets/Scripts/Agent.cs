@@ -15,6 +15,7 @@ public class Agent : MonoBehaviour
     public int loops = 2;
     public List<Command> commands = null;
 
+    public GameObject selection;
     [HideInInspector]
     public Override[] overridesOnTurns;
 
@@ -39,7 +40,19 @@ public class Agent : MonoBehaviour
         CommandUi = Instantiate(commandUiManagerPrefab);
         CommandUi.agent = this;
         CommandUi.DisplayCommands();
+        CommandUi.gameObject.SetActive(false);
         ResetToInitials();
+    }
+
+    public void MakeFocuse(bool b)
+    {
+        CommandUi.gameObject.SetActive(b);
+        selection.SetActive(b);
+    }
+
+    public void SetInteractable(bool b)
+    {
+        GetComponent<Collider>().enabled = b;
     }
 
     public void ResetToInitials()
