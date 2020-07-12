@@ -37,44 +37,24 @@ public class CommandUiManager : MonoBehaviour
             displayers.Add(diplayer.transform);
         }
         turnCoursor.position = displayers[0].position + Vector3.up * turnCoursorSpacing;
-        loopsCounter.position = transform.position + Vector3.up * turnCoursorSpacing + Vector3.left * 0.5f * ((count + 1) % 2) * commandsSpacing;
+        loopsCounter.position = transform.position + Vector3.up * turnCoursorSpacing - Vector3.right * 0.5f * ((count + 1) % 2) * commandsSpacing; ;
         Vector3 v = loopsLine.localScale;
         v.x = commandsSpacing * count;
         loopsLine.localScale = v;
 
-        if (agent.loops > 1)
-        {
-            loopsText.text = "LOOPS " + agent.loops;
-        }
-        else
-        {
-            loopsText.text = "";
-        }
+        loopsText.text = "LOOPS " + agent.loops;
+
     }
 
     public void SetLoop(bool prediction)
     {
         if (prediction)
         {
-            if (agent.loops > 1)
-            {
-                loopsText.text = "LOOPS " + agent.loops;
-            }
-            else
-            {
-                loopsText.text = "";
-            }
+            loopsText.text = "LOOPS " + agent.loops;
         }
         else
         {
-            if (agent.loops > 1)
-            {
-                loopsText.text = "LOOPS " + (agent.loops - agent.currentLoop);
-            }
-            else
-            {
-                loopsText.text = "";
-            }
+            loopsText.text = "LOOPS " + (agent.loops - agent.currentLoop);
         }
         
     }

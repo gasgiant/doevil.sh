@@ -50,8 +50,8 @@ public class OverrideHolder : MonoBehaviour
         cell.AddOverride(this);
         LeanTween.cancel(tweenId);
         tweenId = LeanTween.move(gameObject, cell.transform.position, 0.3f).setEaseOutCubic().id;
-        if (cell.isOnTile)
-            middle.SetActive(false);
+        //if (cell.isOnTile)
+        //    middle.SetActive(false);
     }
 
     public void UnbindFromCell()
