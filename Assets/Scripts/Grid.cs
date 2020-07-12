@@ -17,9 +17,9 @@ public class Grid : MonoBehaviour
     GameObject tilePrefab = null;
 
     [SerializeField]
-    Tile[] tilesArray;
+    public Tile[] tilesArray;
 
-    Tile[,] Tiles;
+    public Tile[,] Tiles;
 
     private void Awake()
     {

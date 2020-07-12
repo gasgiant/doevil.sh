@@ -6,6 +6,8 @@ public class Tile : MonoBehaviour
     public Vector2Int Index;
     public TileType type = TileType.Free;
 
+    public bool isTouched;
+
     OverrideCell cell;
 
     [SerializeField]

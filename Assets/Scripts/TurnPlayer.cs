@@ -27,6 +27,8 @@ public class TurnPlayer : MonoBehaviour
 
     Coroutine playRoutine;
 
+    List<Tile> goalTiles = new List<Tile>();
+
     private void Awake()
     {
         Instance = this;
@@ -36,8 +38,31 @@ public class TurnPlayer : MonoBehaviour
 
     private void Start()
     {
-        Play(true);
+        foreach (var item in Grid.Instance.Tiles)
+        {
+            if (item.type == TileType.Goal)
+                goalTiles.Add(item);
+        }
+
         SetFocusOn(focusAgent);
+        Play(true);
+    }
+
+    private void SetGoals(bool b)
+    {
+        foreach (var item in goalTiles)
+        {
+            item.isTouched = b;
+        }
+    }
+
+    private bool CheckGoals()
+    {
+        foreach (var item in goalTiles)
+        {
+            if (!item.isTouched) return false;
+        }
+        return true;
     }
 
     private void Update()
@@ -97,6 +122,8 @@ public class TurnPlayer : MonoBehaviour
         {
             agent.SetInteractable(true);
         }
+
+        SetGoals(false);
     }
 
     public void AddOverride(Override overr, bool onTile, int turnNumber, Vector2Int index)
@@ -178,7 +205,7 @@ public class TurnPlayer : MonoBehaviour
                 }
                 isFinished = true;
             }
-            if (focusAgent.IsOnWin)
+            if (CheckGoals())
             {
                 if (!prediction)
                 {

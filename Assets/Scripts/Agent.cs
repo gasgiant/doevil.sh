@@ -28,6 +28,8 @@ public class Agent : MonoBehaviour
 
     int tweenId;
 
+    float moveTime = 0.7f;
+
     private void Awake()
     {
         overridesOnTurns = new Override[commands.Count];
@@ -130,9 +132,9 @@ public class Agent : MonoBehaviour
             {
                 if (!prediction)
                 {
-                    TryMoveAnimation(dir, 0.3f);
-                    yield return new WaitForSeconds(0.3f);
-                    yield return new WaitForSeconds(0.3f);
+                    TryMoveAnimation(dir, 0.2f);
+                    yield return new WaitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.2f);
                 }
                 continue;
             }
@@ -142,9 +144,9 @@ public class Agent : MonoBehaviour
             {
                 if (!prediction)
                 {
-                    TryMoveAnimation(dir, 0.3f);
-                    yield return new WaitForSeconds(0.3f);
-                    yield return new WaitForSeconds(0.3f);
+                    TryMoveAnimation(dir, 0.2f);
+                    yield return new WaitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.2f);
                 }
                 continue;
             }
@@ -156,13 +158,20 @@ public class Agent : MonoBehaviour
 
             if (!prediction)
             {
-                tweenId = LeanTween.move(gameObject, newPosition, 0.3f).setEaseOutCubic().id;
-                yield return new WaitForSeconds(0.3f);
+                tweenId = LeanTween.move(gameObject, newPosition, moveTime).setEaseInOutCubic().id;
+                yield return new WaitForSeconds(moveTime);
             }
 
-            if (tile.type == TileType.Goal) break;
+            if (tile.type == TileType.Goal)
+            {
+                tile.isTouched = true;
+            }
 
-            if (tile.type == TileType.Death) Die(prediction);
+            if (tile.type == TileType.Death)
+            {
+                Die(prediction);
+                break;
+            }
         }
 
         blocker.count--;
@@ -188,7 +197,7 @@ public class Agent : MonoBehaviour
 
         if (!prediction)
         {
-            tweenId = LeanTween.move(gameObject, newPosition, 0.3f).setEaseOutCubic().id;
+            tweenId = LeanTween.move(gameObject, newPosition, moveTime).setEaseInOutCubic().id;
         }
 
         return true;
@@ -218,8 +227,8 @@ public class Agent : MonoBehaviour
             Direction = (Direction + dir.x) % 4;
             if (!prediction)
             {
-                tweenId = LeanTween.rotate(gameObject, Direction * 90 * Vector3.forward, 0.3f).setEaseOutCubic().id;
-                yield return new WaitForSeconds(0.3f);
+                tweenId = LeanTween.rotate(gameObject, Direction * 90 * Vector3.forward, moveTime).setEaseInOutCubic().id;
+                yield return new WaitForSeconds(moveTime);
             }
         }
 
@@ -230,7 +239,7 @@ public class Agent : MonoBehaviour
     public void TryMoveAnimation(Vector2Int dir, float time)
     {
         Vector2 pos = transform.position;
-        tweenId = LeanTween.move(gameObject, pos + (Vector2)dir * 0.2f, time * 0.5f)
+        tweenId = LeanTween.move(gameObject, pos + (Vector2)dir * 0.1f, time * 0.5f)
             .setLoopPingPong(1).setEaseOutCubic().id;
     }    
 
