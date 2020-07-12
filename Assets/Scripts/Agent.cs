@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using CameraShake;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Agent : MonoBehaviour
 {
+    public BounceShake.Params shakeParams;
+
     [SerializeField]
     CommandUiManager commandUiManagerPrefab;
     CommandUiManager CommandUi;
@@ -164,7 +167,7 @@ public class Agent : MonoBehaviour
 
             if (tile.type == TileType.Goal)
             {
-                tile.isTouched = true;
+                tile.SetIsTouched(true);
             }
 
             if (tile.type == TileType.Death)
@@ -206,6 +209,8 @@ public class Agent : MonoBehaviour
     void Die(bool predicition)
     {
         IsDead = true;
+        if (!predicition)
+            CameraShaker.Shake(new BounceShake(shakeParams));
     }
 
     Agent OtherAgentOnTile(Agent agent, Vector2Int index)

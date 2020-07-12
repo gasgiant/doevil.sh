@@ -52,7 +52,7 @@ public class TurnPlayer : MonoBehaviour
     {
         foreach (var item in goalTiles)
         {
-            item.isTouched = b;
+            item.SetIsTouched(b);
         }
     }
 
@@ -60,7 +60,7 @@ public class TurnPlayer : MonoBehaviour
     {
         foreach (var item in goalTiles)
         {
-            if (!item.isTouched) return false;
+            if (!item.IsTouched) return false;
         }
         return true;
     }
@@ -205,13 +205,16 @@ public class TurnPlayer : MonoBehaviour
                 }
                 isFinished = true;
             }
-            if (CheckGoals())
+            else
             {
-                if (!prediction)
+                if (CheckGoals())
                 {
-                    uiManager.ShowWinScreen();
+                    if (!prediction)
+                    {
+                        uiManager.ShowWinScreen();
+                    }
+                    isFinished = true;
                 }
-                isFinished = true;
             }
 
             if (prediction)

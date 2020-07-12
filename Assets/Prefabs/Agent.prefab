@@ -321,6 +321,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8c25a02005b71f4184c4c34d15e6acb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shakeParams:
+    positionStrength: 0.2
+    rotationStrength: 0.2
+    axesMultiplier:
+      position: {x: 1, y: 1, z: 0}
+      eulerAngles: {x: 0, y: 0, z: 1}
+    freq: 25
+    numBounces: 7
+    randomness: 0.5
+    attenuation:
+      clippingDistance: 10
+      falloffScale: 50
+      falloffDegree: 1
+      axesMultiplier: {x: 1, y: 1, z: 1}
   commandUiManagerPrefab: {fileID: 7811233843785391800, guid: 56109bd5fe9ac0841aa170c1c04fca73,
     type: 3}
   Index: {x: 0, y: 0}

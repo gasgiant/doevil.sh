@@ -6,7 +6,9 @@ public class Tile : MonoBehaviour
     public Vector2Int Index;
     public TileType type = TileType.Free;
 
-    public bool isTouched;
+    public bool IsTouched => isTouched;
+
+    bool isTouched;
 
     OverrideCell cell;
 
@@ -24,6 +26,12 @@ public class Tile : MonoBehaviour
         cell = GetComponentInChildren<OverrideCell>();
         cell.isOnTile = true;
         cell.index = Index;
+    }
+
+    public void SetIsTouched(bool b)
+    {
+        goalVisuals.SetActive(!b);
+        isTouched = b;
     }
 
     public void Validate()

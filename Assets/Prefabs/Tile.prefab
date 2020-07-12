@@ -375,6 +375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Index: {x: 0, y: 0}
   type: 0
+  isTouched: 0
   freeVisuals: {fileID: 6364892763352538252}
   wallVisuals: {fileID: 8160006763223756672}
   deathVisuals: {fileID: 9173922127129774388}

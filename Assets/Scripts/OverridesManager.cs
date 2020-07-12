@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using CameraShake;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class OverridesManager : MonoBehaviour
 {
+    public BounceShake.Params shakeParams;
     [SerializeField]
     Camera cam = null;
     [SerializeField]
@@ -71,6 +73,7 @@ public class OverridesManager : MonoBehaviour
                 if (cell != null)
                 {
                     holderInHand.BindToCell(cell);
+                    //CameraShaker.Shake(new BounceShake(shakeParams));
                     holderInHand = null;
                 }
                 else
