@@ -38,10 +38,19 @@ public class OverrideHolder : MonoBehaviour
         }
     }
 
+    public void SetAlpha(bool b)
+    {
+        Color c = new Color(0.3f, 0.3f, 0.3f, 1);
+        skipVisuals.GetComponent<SpriteRenderer>().color = b ? Color.white : c;
+        invertVisuals.GetComponent<SpriteRenderer>().color = b ? Color.white : c;
+        repeatVisuals.GetComponent<SpriteRenderer>().color = b ? Color.white : c;
+    }
+
     public void SetInteractable(bool b)
     {
         GetComponent<Collider>().enabled = b;
-        edge.color = b ? edgeNormalColor : new Color(1, 1, 1, 0.6f);
+        SetAlpha(b);
+        //edge.color = b ? edgeNormalColor : new Color(1, 1, 1, 0.6f);
     }
 
     public void BindToCell(OverrideCell cell)
@@ -66,7 +75,8 @@ public class OverrideHolder : MonoBehaviour
 
     public void ResetToInitals()
     {
-        edge.color = edgeNormalColor;
+        //edge.color = edgeNormalColor;
+        SetAlpha(true);
         LeanTween.cancel(tweenId);
         tweenId = LeanTween.move(gameObject, initialPosition, 0.3f).setEaseOutCubic().id;
         GetComponent<Collider>().enabled = true;

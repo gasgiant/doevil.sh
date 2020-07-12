@@ -37,7 +37,7 @@ public class CommandUiManager : MonoBehaviour
             displayers.Add(diplayer.transform);
         }
         turnCoursor.position = displayers[0].position + Vector3.up * turnCoursorSpacing;
-        loopsCounter.position = transform.position + Vector3.up * turnCoursorSpacing - Vector3.right * 0.5f * ((count + 1) % 2) * commandsSpacing; ;
+        loopsCounter.position = transform.position + Vector3.up * turnCoursorSpacing - Vector3.right * 0.5f * ((count + 1) % 2) * commandsSpacing;
         Vector3 v = loopsLine.localScale;
         v.x = commandsSpacing * count;
         loopsLine.localScale = v;

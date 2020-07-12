@@ -349,8 +349,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2890700767811061577}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.656, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: -1.7799994, z: 0}
+  m_LocalScale: {x: 0.4797078, y: 0.4797078, z: 0.4797078}
   m_Children: []
   m_Father: {fileID: 6694630970156498394}
   m_RootOrder: 9
@@ -395,7 +395,7 @@ SpriteRenderer:
   m_SortingLayer: -2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 75700a310687cb04697ca1b4c339f7d0, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.28235295}
+  m_Color: {r: 0.10196079, g: 1, b: 0.18431373, a: 0.28235295}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -961,8 +961,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281335578
-  m_fontColor: {r: 0.10196079, g: 1, b: 0.18431373, a: 1}
+    rgba: 4293717228
+  m_fontColor: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1221,7 +1221,7 @@ PrefabInstance:
     - target: {fileID: 9050682565352484832, guid: cc01fd74328298c468ba067e9f9782ef,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.656
+      value: -1.78
       objectReference: {fileID: 0}
     - target: {fileID: 9050682565352484832, guid: cc01fd74328298c468ba067e9f9782ef,
         type: 3}

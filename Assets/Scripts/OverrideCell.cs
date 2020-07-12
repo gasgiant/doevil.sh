@@ -19,7 +19,14 @@ public class OverrideCell : MonoBehaviour
 
     public void SetHintActive(bool b)
     {
-        hint.SetActive(b);
+        if (col.enabled)
+        {
+            hint.SetActive(b);
+            if (isOnTile)
+            {
+                hint.transform.localScale = Vector3.one * 0.2f;
+            }
+        }
     }
 
     public void AddOverride(OverrideHolder holder)
