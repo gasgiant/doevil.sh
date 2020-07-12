@@ -23,13 +23,19 @@ public class OverrideHolder : MonoBehaviour
     GameObject invertVisuals = null;
     [SerializeField]
     GameObject repeatVisuals = null;
+
+    bool initialized;
     
 
     private void OnEnable()
     {
-        edgeNormalColor = edge.color;
-        initialPosition = transform.position;
-        Validate();
+        if (!initialized)
+        {
+            initialized = true;
+            edgeNormalColor = edge.color;
+            initialPosition = transform.position;
+            Validate();
+        }
     }
 
     public void SetInteractable(bool b)
@@ -41,7 +47,7 @@ public class OverrideHolder : MonoBehaviour
     public void BindToCell(OverrideCell cell)
     {
         cellBinded = cell;
-        cell.AddOverride(overr);
+        cell.AddOverride(this);
         LeanTween.cancel(tweenId);
         tweenId = LeanTween.move(gameObject, cell.transform.position, 0.3f).setEaseOutCubic().id;
         if (cell.isOnTile)

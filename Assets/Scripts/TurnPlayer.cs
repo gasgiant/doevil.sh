@@ -6,10 +6,15 @@ public class TurnPlayer : MonoBehaviour
 {
     public static TurnPlayer Instance;
 
+    public Camera cam;
+    public LayerMask agentsLayer;
     public Agent focusAgent;
+    public List<Agent> agents;
+    
+
     [SerializeField]
     PredictionView predictionView = null;
-    public CommandUiManager CommandUi;
+    
     [SerializeField]
     UiManager uiManager = null;
 
@@ -25,14 +30,31 @@ public class TurnPlayer : MonoBehaviour
     {
         Instance = this;
         overridesOnTiles = new Override[Grid.Size, Grid.Size];
-        CommandUi = FindObjectOfType<CommandUiManager>();
         overrideManager = FindObjectOfType<OverridesManager>();
     }
 
     private void Start()
     {
-        CommandUi.DisplayCommands(focusAgent.commands);
         Play(true);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 100, agentsLayer))
+            {
+                Agent a = hit.transform.gameObject.GetComponent<Agent>();
+                if (a != null)
+                {
+                    focusAgent = a;
+                    Play(true);
+                }
+            }
+
+        }
     }
 
     public void Run()
@@ -47,10 +69,14 @@ public class TurnPlayer : MonoBehaviour
             StopCoroutine(playRoutine);
             playRoutine = null;
         }
+
+        foreach (var agent in agents)
+        {
+            agent.ResetToInitials();
+        }
         uiManager.ResetToDefaults();
-        focusAgent.ResetToInitials();
+        
         overrideManager.SetInteractable(true);
-        CommandUi.SetTurn(0);
     }
 
     public void AddOverride(Override overr, bool onTile, int turnNumber, Vector2Int index)
@@ -86,7 +112,6 @@ public class TurnPlayer : MonoBehaviour
     private IEnumerator PlayCoroutine(bool prediction)
     {
         Blocker blocker = new Blocker();
-        CommandResult result = new CommandResult();
         bool isFinished = false;
 
         if (prediction)
@@ -102,23 +127,17 @@ public class TurnPlayer : MonoBehaviour
 
         while (true)
         {
-            Command command = focusAgent.GetCommand();
-            if (overridesOnTiles[focusAgent.Index.x, focusAgent.Index.y] != null)
-                command = overridesOnTiles[focusAgent.Index.x, focusAgent.Index.y].GetResult(command);
-            Override iverrideOnTurn = focusAgent.GetOverride();
-            if (iverrideOnTurn != null)
-                command = iverrideOnTurn.GetResult(command);
-
-            focusAgent.ExecuteCommand(blocker, result, prediction, command);
-
-            while (blocker.IsBuisy)
+            foreach (var agent in agents)
             {
-                yield return null;
+                PlayAgentTurn(agent, blocker, prediction);
+                while (blocker.IsBuisy)
+                {
+                    yield return null;
+                }
+                agent.IncrementTurn(prediction);
             }
 
-            focusAgent.IncrementTurn();
-
-            if (result.type == CommandResultType.Death)
+            if (focusAgent.IsDead)
             {
                 if (!prediction)
                 {
@@ -126,11 +145,11 @@ public class TurnPlayer : MonoBehaviour
                 }
                 isFinished = true;
             }
-            if (result.type == CommandResultType.Goal)
+            if (focusAgent.IsOnWin)
             {
                 if (!prediction)
                 {
-                    uiManager.ShowWinSceen();
+                    uiManager.ShowWinScreen();
                 }
                 isFinished = true;
             }
@@ -143,13 +162,19 @@ public class TurnPlayer : MonoBehaviour
             {
                 if (!isFinished)
                 {
-                    CommandUi.SetTurn(focusAgent.currentTurn);
                     yield return new WaitForSeconds(0.5f);
                 }
             }
 
-            
-            isFinished = isFinished || focusAgent.GetCommand() == null;
+            if (!isFinished)
+            {
+                bool b = true;
+                foreach (var agent in agents)
+                {
+                    b = b && agent.GetCommand() == null;
+                }
+                isFinished = b;
+            }
 
             if (isFinished) break;
         }
@@ -157,9 +182,24 @@ public class TurnPlayer : MonoBehaviour
         if (prediction)
         {
             predictionView.SetPredictionData(predictedPositions);
+            ResetEverything();
         }
 
         playRoutine = null;
+    }
+
+    void PlayAgentTurn(Agent agent, Blocker blocker, bool prediction)
+    {
+        Command command = agent.GetCommand();
+        if (command != null && !agent.IsDead)
+        {
+            if (overridesOnTiles[agent.Index.x, agent.Index.y] != null)
+                command = overridesOnTiles[agent.Index.x, agent.Index.y].GetResult(command);
+            Override overrideOnTurn = agent.GetOverride();
+            if (overrideOnTurn != null)
+                command = overrideOnTurn.GetResult(command);
+            agent.ExecuteCommand(blocker, prediction, command);
+        }
     }
 }
 

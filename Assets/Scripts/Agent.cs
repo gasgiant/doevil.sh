@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class Agent : MonoBehaviour
 {
-    [HideInInspector]
+    [SerializeField]
+    CommandUiManager commandUiManagerPrefab;
+    CommandUiManager CommandUi;
     public Vector2Int Index;
-    [HideInInspector]
     public Vector2Int InitialIndex;
     public int Direction;
     public int InitialDirection;
@@ -20,6 +21,9 @@ public class Agent : MonoBehaviour
     public int currentTurn;
     public int currentLoop;
 
+    public bool IsOnWin => Grid.Instance.TileAt(Index).type == TileType.Goal;
+    public bool IsDead;
+
     int tweenId;
 
     private void Awake()
@@ -28,12 +32,21 @@ public class Agent : MonoBehaviour
         InitialIndex = Grid.PositionToIndex(transform.position);
         InitialDirection = Direction;
         
+    }
+
+    private void Start()
+    {
+        CommandUi = Instantiate(commandUiManagerPrefab);
+        CommandUi.agent = this;
+        CommandUi.DisplayCommands();
         ResetToInitials();
     }
 
     public void ResetToInitials()
     {
+        CommandUi.SetTurn(0);
         LeanTween.cancel(tweenId);
+        IsDead = false;
         currentTurn = 0;
         currentLoop = 0;
         Index = InitialIndex;
@@ -42,7 +55,7 @@ public class Agent : MonoBehaviour
         transform.rotation = Quaternion.AngleAxis(90 * Direction, Vector3.forward);
     }
 
-    public void IncrementTurn()
+    public void IncrementTurn(bool prediction)
     {
         currentTurn += 1;
         if (currentTurn >= commands.Count)
@@ -50,6 +63,8 @@ public class Agent : MonoBehaviour
             currentLoop++;
             currentTurn = 0;
         }
+
+        if (!prediction) CommandUi.SetTurn(currentTurn);
     }
 
     public Command GetCommand()
@@ -64,23 +79,23 @@ public class Agent : MonoBehaviour
         return overridesOnTurns[currentTurn];
     }
 
-    public void ExecuteCommand(Blocker blocker, CommandResult result, bool prediction, Command command)
+    public void ExecuteCommand(Blocker blocker, bool prediction, Command command)
     {
-        result.type = CommandResultType.None;
         switch (command.type)
         {
             case CommandType.Move:
-                StartCoroutine(Move(blocker, result, prediction, command.dir, command.repeats));
+                StartCoroutine(Move(blocker, prediction, command.dir, command.repeats));
                 break;
             case CommandType.Rotate:
-                StartCoroutine(Roatate(blocker, result, prediction, command.dir, command.repeats));
+                StartCoroutine(Roatate(blocker, prediction, command.dir, command.repeats));
                 break;
             default:
                 break;
         }
+        
     }
 
-    public IEnumerator Move(Blocker blocker, CommandResult result, bool prediction, Vector2Int dir, int repeats)
+    public IEnumerator Move(Blocker blocker, bool prediction, Vector2Int dir, int repeats)
     {
         blocker.count++;
         dir = DirectionRelative(dir, Direction);
@@ -89,6 +104,18 @@ public class Agent : MonoBehaviour
             Vector2Int newIndex = Index + dir;
             
             if (Grid.IsOutOfBoundaries(newIndex) || Grid.Instance.TileAt(newIndex).type == TileType.Wall)
+            {
+                if (!prediction)
+                {
+                    TryMoveAnimation(dir, 0.3f);
+                    yield return new WaitForSeconds(0.3f);
+                    yield return new WaitForSeconds(0.3f);
+                }
+                continue;
+            }
+
+            Agent otherAgent = OtherAgentOnTile(this, newIndex);
+            if (otherAgent != null && !otherAgent.GetPushed(dir, prediction))
             {
                 if (!prediction)
                 {
@@ -110,23 +137,57 @@ public class Agent : MonoBehaviour
                 yield return new WaitForSeconds(0.3f);
             }
 
-            if (tile.type == TileType.Goal)
-            {
-                result.type = CommandResultType.Goal;
-                break;
-            }
+            if (tile.type == TileType.Goal) break;
 
-            if (tile.type == TileType.Death)
-            {
-                result.type = CommandResultType.Death;
-                break;
-            }
+            if (tile.type == TileType.Death) Die(prediction);
         }
 
         blocker.count--;
     }
 
-    public IEnumerator Roatate(Blocker blocker, CommandResult result, bool prediction, Vector2Int dir, int repeats)
+    public bool GetPushed(Vector2Int dir, bool prediction)
+    {
+        Vector2Int newIndex = Index + dir;
+        if (Grid.IsOutOfBoundaries(newIndex) || Grid.Instance.TileAt(newIndex).type == TileType.Wall)
+            return false;
+
+        Agent otherAgent = OtherAgentOnTile(this, newIndex);
+
+        if (otherAgent != null && !otherAgent.GetPushed(dir, prediction))
+        {
+            return false;
+        }      
+
+        Vector3 newPosition = Vector3.right * (dir.x + Index.x) + Vector3.up * (dir.y + Index.y);
+        Index += dir;
+        if (Grid.Instance.TileAt(Index).type == TileType.Death)
+            Die(prediction);
+
+        if (!prediction)
+        {
+            tweenId = LeanTween.move(gameObject, newPosition, 0.3f).setEaseOutCubic().id;
+        }
+
+        return true;
+    }
+
+    void Die(bool predicition)
+    {
+        IsDead = true;
+    }
+
+    Agent OtherAgentOnTile(Agent agent, Vector2Int index)
+    {
+        Agent res = null;
+        foreach (var item in TurnPlayer.Instance.agents)
+        {
+            if (item.Index == index && item != agent)
+                res = item;
+        }
+        return res;
+    }
+
+    public IEnumerator Roatate(Blocker blocker, bool prediction, Vector2Int dir, int repeats)
     {
         blocker.count++;
         for (int i = 0; i < repeats; i++)
@@ -156,13 +217,6 @@ public class Agent : MonoBehaviour
         v = Quaternion.AngleAxis(90 * rot, Vector3.forward) * v;
         return new Vector2Int(Mathf.RoundToInt(v.x), Mathf.RoundToInt(v.y));
     }
-}
-
-public enum CommandResultType { None, Goal, Death }
-
-public class CommandResult
-{
-    public CommandResultType type;
 }
 
 

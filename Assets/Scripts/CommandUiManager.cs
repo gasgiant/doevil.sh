@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CommandUiManager : MonoBehaviour
 {
+    public Agent agent;
+
     [SerializeField]
     CommandDisplayer commandDisplayerPrefab = null;
     [SerializeField]
@@ -21,8 +23,9 @@ public class CommandUiManager : MonoBehaviour
 
     List<Transform> displayers = new List<Transform>();
 
-    public void DisplayCommands(List<Command> commands)
+    public void DisplayCommands()
     {
+        List<Command> commands = agent.commands;
         displayers.Clear();
         int count = commands.Count;
         for (int i = 0; i < count; i++)
@@ -39,9 +42,9 @@ public class CommandUiManager : MonoBehaviour
         v.x = commandsSpacing * count;
         loopsLine.localScale = v;
 
-        if (TurnPlayer.Instance.focusAgent.loops > 1)
+        if (agent.loops > 1)
         {
-            loopsText.text = "LOOPS " + TurnPlayer.Instance.focusAgent.loops;
+            loopsText.text = "LOOPS " + agent.loops;
         }
         else
         {
@@ -51,12 +54,12 @@ public class CommandUiManager : MonoBehaviour
 
     public void SetTurn(int i)
     {
+        
         LeanTween.move(turnCoursor.gameObject, displayers[i].position + Vector3.up * turnCoursorSpacing, 0.3f)
             .setEaseInOutCubic();
-        if (TurnPlayer.Instance.focusAgent.loops > 1)
+        if (agent.loops > 1)
         {
-            loopsText.text = "LOOPS " 
-                + (TurnPlayer.Instance.focusAgent.loops - TurnPlayer.Instance.focusAgent.currentLoop);
+            loopsText.text = "LOOPS " + (agent.loops - agent.currentLoop);
         }
         else
         {

@@ -7,16 +7,45 @@ public class OverrideCell : MonoBehaviour
     public bool isOnTile;
     public int turnNumber;
     public Vector2Int index;
+    Collider col;
+    float nextTimeToCheck;
+    OverrideHolder myHolder;
 
-    public void AddOverride(Override overr)
+    private void OnEnable()
     {
-        TurnPlayer.Instance.AddOverride(overr, isOnTile, turnNumber, index);
-        GetComponent<Collider>().enabled = false;
+        col = GetComponent<Collider>();
+    }
+
+    public void AddOverride(OverrideHolder holder)
+    {
+        TurnPlayer.Instance.AddOverride(holder.overr, isOnTile, turnNumber, index);
+        col.enabled = false;
+        holder.transform.SetParent(transform, true);
+        myHolder = holder;
     }
 
     public void RemoveOverride()
     {
+        if (myHolder != null) myHolder.transform.SetParent(null);
         TurnPlayer.Instance.RemoveOverride(isOnTile, turnNumber, index);
-        GetComponent<Collider>().enabled = true;
+        col.enabled = true;
+    }
+
+    private void Update()
+    {
+        if (nextTimeToCheck < Time.time && isOnTile)
+        {
+            nextTimeToCheck = Time.time + 0.3f;
+            bool b = true;
+            foreach (var agent in TurnPlayer.Instance.agents)
+            {
+                if (agent.Index == index)
+                {
+                    b = false;
+                    break;
+                }
+            }
+            col.enabled = b;
+        }   
     }
 }

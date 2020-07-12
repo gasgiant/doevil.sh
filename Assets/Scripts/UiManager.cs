@@ -27,7 +27,7 @@ public class UiManager : MonoBehaviour
         loseScreen.SetActive(true);
     }
 
-    public void ShowWinSceen()
+    public void ShowWinScreen()
     {
         winScreen.SetActive(true);
     }
