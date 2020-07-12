@@ -12,6 +12,7 @@ public class OverridesManager : MonoBehaviour
     LayerMask cellsLayer = 0;
 
     OverrideHolder[] holders;
+    OverrideCell[] cells;
 
     OverrideHolder holderInHand;
     Vector3 vel;
@@ -20,6 +21,20 @@ public class OverridesManager : MonoBehaviour
     private void Awake()
     {
         holders = FindObjectsOfType<OverrideHolder>();
+        
+    }
+
+    private void Start()
+    {
+        cells = FindObjectsOfType<OverrideCell>();
+    }
+
+    void SetHintForAllCells(bool b)
+    {
+        foreach (var cell in cells)
+        {
+            cell.SetHintActive(b);
+        }
     }
 
     private void Update()
@@ -32,7 +47,10 @@ public class OverridesManager : MonoBehaviour
             {
                 holderInHand = hit.transform.gameObject.GetComponent<OverrideHolder>();
                 if (holderInHand != null)
+                {
+                    SetHintForAllCells(true);
                     holderInHand.UnbindFromCell();
+                }
             }
             
         }
@@ -41,6 +59,7 @@ public class OverridesManager : MonoBehaviour
         {
             if (holderInHand != null)
             {
+                SetHintForAllCells(false);
                 Ray ray = cam.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 OverrideCell cell = null;

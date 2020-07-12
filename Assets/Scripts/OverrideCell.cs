@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class OverrideCell : MonoBehaviour
 {
+    public GameObject hint;
     public bool isOnTile;
     public int turnNumber;
     public Vector2Int index;
@@ -14,6 +15,11 @@ public class OverrideCell : MonoBehaviour
     private void OnEnable()
     {
         col = GetComponent<Collider>();
+    }
+
+    public void SetHintActive(bool b)
+    {
+        hint.SetActive(b);
     }
 
     public void AddOverride(OverrideHolder holder)

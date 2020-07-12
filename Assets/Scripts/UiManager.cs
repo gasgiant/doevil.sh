@@ -10,6 +10,8 @@ public class UiManager : MonoBehaviour
     Button runButton = null;
     [SerializeField]
     Button resetButton = null;
+    [SerializeField]
+    Button nextButton = null;
 
     [SerializeField]
     GameObject loseScreen = null;
@@ -30,12 +32,14 @@ public class UiManager : MonoBehaviour
     public void ShowWinScreen()
     {
         winScreen.SetActive(true);
+        nextButton.gameObject.SetActive(true);
     }
 
     public void ResetToDefaults()
     {
         loseScreen.SetActive(false);
         winScreen.SetActive(false);
+        nextButton.gameObject.SetActive(false);
         SwitchRun(true);
     }
 }

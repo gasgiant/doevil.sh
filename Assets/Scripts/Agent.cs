@@ -12,15 +12,16 @@ public class Agent : MonoBehaviour
     public int Direction;
     public int InitialDirection;
 
-    public int loops = 2;
+    public bool unhackable;
+    public int loops;
     public List<Command> commands = null;
 
     public GameObject selection;
     [HideInInspector]
     public Override[] overridesOnTurns;
 
-    public int currentTurn;
-    public int currentLoop;
+    public int currentTurn = 0;
+    public int currentLoop = 0;
 
     public bool IsOnWin => Grid.Instance.TileAt(Index).type == TileType.Goal;
     public bool IsDead;
@@ -32,7 +33,9 @@ public class Agent : MonoBehaviour
         overridesOnTurns = new Override[commands.Count];
         InitialIndex = Grid.PositionToIndex(transform.position);
         InitialDirection = Direction;
-        
+        if (unhackable)
+            GetComponent<Collider>().enabled = false;
+
     }
 
     private void Start()
@@ -52,12 +55,14 @@ public class Agent : MonoBehaviour
 
     public void SetInteractable(bool b)
     {
-        GetComponent<Collider>().enabled = b;
+        if (!unhackable)
+            GetComponent<Collider>().enabled = b;
     }
 
     public void ResetToInitials()
     {
         CommandUi.SetTurn(0);
+        CommandUi.SetLoop(true);
         LeanTween.cancel(tweenId);
         IsDead = false;
         currentTurn = 0;
@@ -75,9 +80,14 @@ public class Agent : MonoBehaviour
         {
             currentLoop++;
             currentTurn = 0;
+
+            CommandUi.SetLoop(prediction);
         }
 
-        if (!prediction) CommandUi.SetTurn(currentTurn);
+        if (!prediction)
+        {
+            CommandUi.SetTurn(currentTurn);
+        }
     }
 
     public Command GetCommand()

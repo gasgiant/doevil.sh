@@ -12,7 +12,7 @@ public class CommandUiManager : MonoBehaviour
     float commandsSpacing = 1;
     [SerializeField]
     Transform turnCoursor = null;
-    float turnCoursorSpacing = 1;
+    public float turnCoursorSpacing = 1;
 
     [SerializeField]
     Transform loopsCounter = null;
@@ -52,18 +52,36 @@ public class CommandUiManager : MonoBehaviour
         }
     }
 
-    public void SetTurn(int i)
+    public void SetLoop(bool prediction)
     {
-        
-        LeanTween.move(turnCoursor.gameObject, displayers[i].position + Vector3.up * turnCoursorSpacing, 0.3f)
-            .setEaseInOutCubic();
-        if (agent.loops > 1)
+        if (prediction)
         {
-            loopsText.text = "LOOPS " + (agent.loops - agent.currentLoop);
+            if (agent.loops > 1)
+            {
+                loopsText.text = "LOOPS " + agent.loops;
+            }
+            else
+            {
+                loopsText.text = "";
+            }
         }
         else
         {
-            loopsText.text = "";
+            if (agent.loops > 1)
+            {
+                loopsText.text = "LOOPS " + (agent.loops - agent.currentLoop);
+            }
+            else
+            {
+                loopsText.text = "";
+            }
         }
+        
+    }
+
+    public void SetTurn(int i)
+    {
+        LeanTween.move(turnCoursor.gameObject, displayers[i].position + Vector3.up * turnCoursorSpacing, 0.3f)
+            .setEaseInOutCubic();
     }
 }

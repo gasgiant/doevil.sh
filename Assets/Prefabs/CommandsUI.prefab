@@ -24,8 +24,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7811233843785391803}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 16.52, y: 8.19, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 14.43, y: 8.61, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7811233845371668202}
@@ -48,8 +48,9 @@ MonoBehaviour:
   agent: {fileID: 0}
   commandDisplayerPrefab: {fileID: 1121952040, guid: 594815cd9d4865b48847c14532137812,
     type: 3}
-  commandsSpacing: 1.3
+  commandsSpacing: 0.8
   turnCoursor: {fileID: 7811233845371668202}
+  turnCoursorSpacing: 0.7
   loopsCounter: {fileID: 7811233843865011531}
   loopsLine: {fileID: 7811233844714331355}
   loopsText: {fileID: 7811233844233801147}
@@ -121,7 +122,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.06, y: 0.56}
+  m_AnchoredPosition: {x: 0.443, y: 0.369}
   m_SizeDelta: {x: 2.0576248, y: 0.8955116}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &7811233844233801150
@@ -226,8 +227,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 4.07
-  m_fontSizeBase: 4.07
+  m_fontSize: 2.55
+  m_fontSizeBase: 2.55
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -316,7 +317,7 @@ Transform:
   m_GameObject: {fileID: 7811233844714331354}
   m_LocalRotation: {x: -0, y: -0, z: 0.000000014901161, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.8872538, y: 0.047938284, z: 1}
+  m_LocalScale: {x: 5.8872538, y: 0.043742724, z: 1}
   m_Children: []
   m_Father: {fileID: 7811233843865011531}
   m_RootOrder: 1
@@ -397,7 +398,7 @@ Transform:
   m_GameObject: {fileID: 7811233845371667988}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.18618488, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.15126777, z: 1}
   m_Children: []
   m_Father: {fileID: 7811233843785391801}
   m_RootOrder: 0

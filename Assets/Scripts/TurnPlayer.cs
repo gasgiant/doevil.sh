@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TurnPlayer : MonoBehaviour
 {
+    public int nextLevel;
     public static TurnPlayer Instance;
 
     public Camera cam;
@@ -65,6 +66,11 @@ public class TurnPlayer : MonoBehaviour
         {
             item.MakeFocuse(agent == item);
         }
+    }
+
+    public void ToNextLevel()
+    {
+        LevelManager.Instance.LoadLevel(nextLevel);
     }
 
     public void Run()
@@ -155,7 +161,16 @@ public class TurnPlayer : MonoBehaviour
                 agent.IncrementTurn(prediction);
             }
 
-            if (focusAgent.IsDead)
+            bool allHackableDead = true;
+            foreach (var agent in agents)
+            {
+                if (!agent.unhackable && !agent.IsDead)
+                {
+                    allHackableDead = false;
+                }
+            }
+
+            if (allHackableDead)
             {
                 if (!prediction)
                 {
