@@ -6,6 +6,8 @@ using UnityEngine;
 public class Agent : MonoBehaviour
 {
     public BounceShake.Params shakeParams;
+    public GameObject mainVisuals;
+    public Animator explosion;
 
     [SerializeField]
     CommandUiManager commandUiManagerPrefab;
@@ -31,7 +33,7 @@ public class Agent : MonoBehaviour
 
     int tweenId;
 
-    float moveTime = 0.7f;
+    float moveTime = 0.4f;
 
     private void Awake()
     {
@@ -69,6 +71,8 @@ public class Agent : MonoBehaviour
         CommandUi.SetTurn(0);
         CommandUi.SetLoop(true);
         LeanTween.cancel(tweenId);
+        explosion.gameObject.SetActive(false);
+        mainVisuals.SetActive(true);
         IsDead = false;
         currentTurn = 0;
         currentLoop = 0;
@@ -76,6 +80,11 @@ public class Agent : MonoBehaviour
         Direction = InitialDirection;
         transform.position = Vector3.right * Index.x + Vector3.up * Index.y;
         transform.rotation = Quaternion.AngleAxis(90 * Direction, Vector3.forward);
+    }
+
+    void DisableExplosion()
+    {
+        explosion.gameObject.SetActive(false);
     }
 
     public void IncrementTurn(bool prediction)
@@ -137,7 +146,7 @@ public class Agent : MonoBehaviour
                 {
                     TryMoveAnimation(dir, 0.2f);
                     yield return new WaitForSeconds(0.2f);
-                    yield return new WaitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.1f);
                 }
                 continue;
             }
@@ -161,7 +170,7 @@ public class Agent : MonoBehaviour
 
             if (!prediction)
             {
-                tweenId = LeanTween.move(gameObject, newPosition, moveTime).setEaseInOutCubic().id;
+                tweenId = DoMove(newPosition);
                 yield return new WaitForSeconds(moveTime);
             }
 
@@ -178,6 +187,11 @@ public class Agent : MonoBehaviour
         }
 
         blocker.count--;
+    }
+
+    int DoMove(Vector2 newPosition)
+    {
+        return LeanTween.move(gameObject, newPosition, moveTime).id;
     }
 
     public bool GetPushed(Vector2Int dir, bool prediction)
@@ -200,7 +214,7 @@ public class Agent : MonoBehaviour
 
         if (!prediction)
         {
-            tweenId = LeanTween.move(gameObject, newPosition, moveTime).setEaseInOutCubic().id;
+            tweenId = DoMove(newPosition);
         }
 
         return true;
@@ -210,7 +224,13 @@ public class Agent : MonoBehaviour
     {
         IsDead = true;
         if (!predicition)
+        {
+            mainVisuals.SetActive(false);
+            explosion.gameObject.SetActive(true);
+            explosion.SetTrigger("Explode");
+            Invoke("DisableExplosion", 0.9f);
             CameraShaker.Shake(new BounceShake(shakeParams));
+        }
     }
 
     Agent OtherAgentOnTile(Agent agent, Vector2Int index)

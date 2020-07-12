@@ -201,6 +201,7 @@ public class TurnPlayer : MonoBehaviour
             {
                 if (!prediction)
                 {
+                    yield return new WaitForSeconds(1.1f);
                     uiManager.ShowLoseSceen();
                 }
                 isFinished = true;
@@ -225,7 +226,7 @@ public class TurnPlayer : MonoBehaviour
             {
                 if (!isFinished)
                 {
-                    yield return new WaitForSeconds(0.5f);
+                    yield return new WaitForSeconds(0.3f);
                 }
             }
 
