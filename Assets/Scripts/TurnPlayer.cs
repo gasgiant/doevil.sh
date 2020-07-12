@@ -29,6 +29,11 @@ public class TurnPlayer : MonoBehaviour
 
     List<Tile> goalTiles = new List<Tile>();
 
+    public void ToMenu()
+    {
+        LevelManager.Instance.ToMenu();
+    }
+
     private void Awake()
     {
         Instance = this;
